@@ -21,7 +21,8 @@
         <audio ref="audio"
             :src="`https://music.163.com/song/media/outer/url?id=${playList[playListIndex].id}.mp3`"></audio>
         <van-popup v-model:show="detailShow" position="right" :style="{ height: '100%',width:'100%' }">
-            <MusicDetail :musicList="playList[playListIndex]" :play="play" :isbtnShow="isbtnShow"/>
+            <MusicDetail :musicList="playList[playListIndex]" :play="play" :isbtnShow="isbtnShow"
+                :addDuration="addDuration" />
         </van-popup>
     </div>
 </template>
@@ -32,16 +33,22 @@
     } from 'vuex'
     import MusicDetail from '@/components/item/MusicDetail.vue'
     export default {
+        data() {
+            return {
+                interVal: 0
+            }
+        },
         computed: {
             ...mapState(['playList', 'playListIndex', 'isbtnShow', 'detailShow'])
         },
         mounted() {
-            this.$store.dispatch('getLyric',this.playList[this.playListIndex].id)
-            console.log(this.$refs);
+            this.$store.dispatch('getLyric', this.playList[this.playListIndex].id)
+            // console.log(this.$refs);
+            this.addDuration()
         },
-        updated(){
+        updated() {
             // 将id传给store的‘getLyric’方法
-            this.$store.dispatch('getLyric',this.playList[this.playListIndex].id)
+            this.$store.dispatch('getLyric', this.playList[this.playListIndex].id)
         },
         methods: {
             play() {
@@ -49,14 +56,26 @@
                 if (this.$refs.audio.paused) {
                     this.$refs.audio.play()
                     this.updateIsbtnShow(false)
+                    this.updateTime() //播放调用函数进行传值
 
                 } else {
                     this.$refs.audio.pause()
                     this.updateIsbtnShow(true)
+                    clearInterval(this.interVal) //暂停清楚定时器
                 }
 
             },
-            ...mapMutations(['updateIsbtnShow', 'updateDetailShow'])
+            // 总时长
+            addDuration() {
+                this.updateDuration(this.$refs.audio.duration)
+            },
+            // ***待优化***
+            updateTime() {
+                this.interVal = setInterval(() => {
+                    this.updateCurrentTime(this.$refs.audio.currentTime)
+                }, 10)
+            },
+            ...mapMutations(['updateIsbtnShow', 'updateDetailShow', 'updateCurrentTime', 'updateDuration'])
         },
         watch: {
             playListIndex() { //监听如果下标发生改变自动播放
@@ -72,7 +91,7 @@
                 }
             }
         },
-        components:{
+        components: {
             MusicDetail,
         }
     }
