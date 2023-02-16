@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <router-view/>
-    <FooterMusic/>
+    <FooterMusic v-show="$store.state.isFooterMusic"/>
   </div>
 </template>
 <script>

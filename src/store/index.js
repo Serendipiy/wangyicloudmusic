@@ -4,6 +4,9 @@ import {
 import {
   getMusicLyric
 } from '@/request/api/item.js'
+import {
+  getPhoneLogin,sendCaptcha,verifyCaptcha
+} from '@/request/api/home.js'
 export default createStore({
   state: {
     playList: [{ //播放列表
@@ -24,6 +27,10 @@ export default createStore({
     lyricList: {}, //歌词
     currentTime:0,//歌曲播放当前时间
     duration:0,//歌曲总时长
+    isLogin:false,//判断是否登录
+    isFooterMusic:true,//判断是否需要显示底部组件
+    token:"",
+    user:{},//用户信息
   },
   getters: {},
   mutations: {
@@ -49,6 +56,19 @@ export default createStore({
     },
     updateDuration(state,value){
       state.duration = value
+    },
+    pushPlayList(state,value){
+      state.playList.push(value)
+    },
+    updateIsLogin(state,value){
+      state.isLogin = true
+    },
+    updateToken(state,value){
+      state.token = value
+      localStorage.setItem('token',state.token)
+    },
+    updateUser(state,value){
+      state.user = value
     }
   },
   // 获取数据（异步请求）在actions
@@ -58,6 +78,23 @@ export default createStore({
       // console.log(res);
       // 更新数据
       context.commit('updateLyricList', res.data.lrc)
+    },
+    async getLogin(context,value){
+      let res = await getPhoneLogin(value)
+      console.log(res);
+      return res;
+    },
+    // 发送验证码
+    async sendCode(context,value){
+      let res = await sendCaptcha(value)
+      console.log(res);
+      return res;
+    },
+    // 验证验证码
+    async checkCode(context,value){
+      let res = await verifyCaptcha(value)
+      console.log(res);
+      return res;
     }
   },
   modules: {}
