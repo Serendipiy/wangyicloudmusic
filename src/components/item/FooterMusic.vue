@@ -61,7 +61,7 @@
                 } else {
                     this.$refs.audio.pause()
                     this.updateIsbtnShow(true)
-                    clearInterval(this.interVal) //暂停清楚定时器
+                    clearInterval(this.interVal) //暂停清除定时器
                 }
 
             },

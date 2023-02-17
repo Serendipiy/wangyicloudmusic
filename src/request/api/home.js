@@ -10,7 +10,7 @@ export function getBanner(){
 export function getMusicList(){
     return service({
         method:"GET",
-        url:"/personalized?limit=10"
+        url:"/personalized?limit=20"
     })
 }
 // 搜索

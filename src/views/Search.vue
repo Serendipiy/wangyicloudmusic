@@ -80,7 +80,6 @@
                 this.searchList = res.data.result.songs
             },
             updateIndex(item) {
-                // debugger
                 item.al = item.album
                 item.al.picUrl = item.album.artist.img1v1Url
                 this.$store.commit('pushPlayList', item)
